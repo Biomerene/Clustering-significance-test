@@ -19,7 +19,7 @@ parser.add_argument('-i1', help='index of the column with tree lables' )
 parser.add_argument('-i2', help='index of the column with lables to test' ) 
 parser.add_argument('-p','--p_value',help='significance level for cluster selection', default=0.05, type=float)
 parser.add_argument('-r','--replicates',help='number of permutation replicates', default=10000)
-parser.add_argument('-o','--out', 'output directory path')
+parser.add_argument('-o','--out', help='output directory path')
 args = parser.parse_args()
 
 if not os.path.exists(args.out):
