@@ -87,9 +87,9 @@ def cut(node):
     return cluster
 
 tree = treeswift.read_tree_nexus(args.tree)
-annot = pd.read_table(args.meta, header=None)
-annot[3] = annot[args.i1] + '_'+ annot[args.i2] #create leaf lables
-annot.columns = ['seqid','annot_1','leaf_lab']
+annot = pd.read_table(args.meta)
+annot['leaf_lab'] = annot[args.i1] + '_'+ annot[args.i2] #create leaf lables
+# annot.columns = ['seqid','annot_1','leaf_lab']
 #clust = root_dist(tree['tree_1'], 4, 1 ) #get distance based clusters
 
 
