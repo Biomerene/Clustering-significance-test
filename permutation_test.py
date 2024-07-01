@@ -123,7 +123,10 @@ tmp.columns = ['counts']
 tmp.reset_index(inplace=True)
 sum_cluster = tmp.groupby('cluster').sum(numeric_only=True)
 max_per_cluster = tmp.groupby('cluster').max()
-observed_difference_in_nps=sum(max_per_cluster['counts'])/sum(sum_cluster['counts']) #cluster purity https://stats.stackexchange.com/questions/95731/how-to-calculate-purity
+if not sum(sum_cluster['counts']) == 0:
+    observed_difference_in_nps=sum(max_per_cluster['counts'])/sum(sum_cluster['counts']) #cluster purity https://stats.stackexchange.com/questions/95731/how-to-calculate-purity
+else:
+    observed_difference_in_nps = 0.0
 observed_difference_per_cluster = np.array(max_per_cluster['counts']/sum_cluster['counts'])
 
 print(f"global cluster purity: {observed_difference_in_nps : .2f}")
@@ -131,16 +134,22 @@ print(f"global cluster purity: {observed_difference_in_nps : .2f}")
 #simulation
 simulated = []
 simulated_per_group = []
-for _ in trange(1000):
-    annot['tmp'] = annot[column].sample(frac=1).values
+for _ in range(1000):
+    annot['tmp'] = annot[args.i2].sample(frac=1).values
     tmp2 = annot.groupby('cluster')['tmp'].value_counts().sort_index()
     tmp2 = pd.DataFrame(tmp2)
     tmp2.columns = ['counts']
     tmp2.reset_index(inplace=True)
     sum_cluster2 = tmp2.groupby('cluster').sum(numeric_only=True)
     max_per_cluster2 = tmp2.groupby('cluster').max()
-    simulated_per_group.append(max_per_cluster2['counts']/sum_cluster2['counts'])
-    simulated.append(sum(max_per_cluster2['counts'])/sum(sum_cluster2['counts']))
+    if not (sum_cluster2['counts'] == 0).any():
+        simulated_per_group.append(max_per_cluster2['counts']/sum_cluster2['counts'])
+    else:
+        simulated_per_group.append(0.0)
+    if not sum(sum_cluster2['counts']) == 0:
+        simulated.append(sum(max_per_cluster2['counts'])/sum(sum_cluster2['counts']))
+    else:
+        simulated.append(0.0)
 
 simulated_results_per_cluster = np.array(simulated_per_group)
 print(f"average cluster purity (permuted) : { np.mean(simulated):.2f} {u'±'}{np.std(simulated) : .2f}")
@@ -178,7 +187,7 @@ density_plot.set(
     xlabel='Absolute Difference cluster purity',
     ylabel='Proportion of Simulations',
     title=f'Permutation test for determination\n of cluster-label congruence \n{ "Test: Passed" if significant_or_not else "Test:Failed"} (p = {p_value})'
-    
+
 )
 
 # Add a line to show the actual difference observed in the data
