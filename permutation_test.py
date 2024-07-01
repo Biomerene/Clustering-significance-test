@@ -114,10 +114,10 @@ annot = pd.merge(clust_leaf,annot,
                  right_on='leaf_lab', 
                  left_on='leaf_lab') #add annotations to clusters
 
-column = 'annot_1' #only chnage this colum 
+#column = 'annot_1' #only change this colum
 #column2 = 'tmp' #simulation output is saved here
 
-tmp = annot.groupby('cluster')[column].value_counts().sort_index()
+tmp = annot.groupby('cluster')[args.i2].value_counts().sort_index()
 tmp = pd.DataFrame(tmp)
 tmp.columns = ['counts']
 tmp.reset_index(inplace=True)
